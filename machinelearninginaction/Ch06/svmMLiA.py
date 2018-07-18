@@ -5,6 +5,7 @@ Chapter 5 source file for Machine Learing in Action
 '''
 from numpy import *
 from time import sleep
+import pdb
 
 def loadDataSet(fileName):
     dataMat = []; labelMat = []
@@ -36,8 +37,16 @@ def smoSimple(dataMatIn, classLabels, C, toler, maxIter):
     while (iter < maxIter):
         alphaPairsChanged = 0
         for i in range(m):
-            fXi = float(multiply(alphas,labelMat).T*(dataMatrix*dataMatrix[i,:].T)) + b
+            fXi = float( multiply(alphas,labelMat).T * (dataMatrix * dataMatrix[i].T)) + b  
             Ei = fXi - float(labelMat[i])#if checks if an example violates KKT conditions
+'''
+fXi为预估类别,是个数值,  W^T*X+b  w指的是预估的法向量,默认为zeros x为随机获取的某一点构成的向量, W^T*X 就是获取向量在法向量上的投影长度(矢量) b为偏移值,默认为0     
+a,b为行向量 n x 1    (a,b) = |a||b|cos(r) = a*b^T = b*a^T	-->1 x 1
+dataMatrix * dataMatrix[i].T	dataMatrix[i].T 是列向量, 上述式子的几何意义为:
+1.这里的W 不是传统意义上的法向量,而是对应所有的点产生的其影响力的向量,X指的是对于某一个点所在向量,所有的点构成的向量对其投影的长度的集合,  然后W^T*X 就是指的所有有影响的向量的投影的和 得出预估类别
+2.矩阵中的每行是存在的一个点,连接原点与其构成向量,求所有的点在当前列向量上的投影
+Ei为基于实际情况与预测得出的误差
+'''
             if ((labelMat[i]*Ei < -toler) and (alphas[i] < C)) or ((labelMat[i]*Ei > toler) and (alphas[i] > 0)):
                 j = selectJrand(i,m)
                 fXj = float(multiply(alphas,labelMat).T*(dataMatrix*dataMatrix[j,:].T)) + b
@@ -49,12 +58,12 @@ def smoSimple(dataMatIn, classLabels, C, toler, maxIter):
                 else:
                     L = max(0, alphas[j] + alphas[i] - C)
                     H = min(C, alphas[j] + alphas[i])
-                if L==H: print "L==H"; continue
+                if L==H: print ("L==H"); continue
                 eta = 2.0 * dataMatrix[i,:]*dataMatrix[j,:].T - dataMatrix[i,:]*dataMatrix[i,:].T - dataMatrix[j,:]*dataMatrix[j,:].T
-                if eta >= 0: print "eta>=0"; continue
+                if eta >= 0: print ("eta>=0"); continue
                 alphas[j] -= labelMat[j]*(Ei - Ej)/eta
                 alphas[j] = clipAlpha(alphas[j],H,L)
-                if (abs(alphas[j] - alphaJold) < 0.00001): print "j not moving enough"; continue
+                if (abs(alphas[j] - alphaJold) < 0.00001): print ("j not moving enough"); continue
                 alphas[i] += labelMat[j]*labelMat[i]*(alphaJold - alphas[j])#update i by the same amount as j
                                                                         #the update is in the oppostie direction
                 b1 = b - Ei- labelMat[i]*(alphas[i]-alphaIold)*dataMatrix[i,:]*dataMatrix[i,:].T - labelMat[j]*(alphas[j]-alphaJold)*dataMatrix[i,:]*dataMatrix[j,:].T
@@ -63,12 +72,15 @@ def smoSimple(dataMatIn, classLabels, C, toler, maxIter):
                 elif (0 < alphas[j]) and (C > alphas[j]): b = b2
                 else: b = (b1 + b2)/2.0
                 alphaPairsChanged += 1
-                print "iter: %d i:%d, pairs changed %d" % (iter,i,alphaPairsChanged)
+                print ("iter: %d i:%d, pairs changed %d" % (iter,i,alphaPairsChanged))
         if (alphaPairsChanged == 0): iter += 1
         else: iter = 0
-        print "iteration number: %d" % iter
+        print ("iteration number: %d" % iter)
     return b,alphas
 
+
+
+'''
 def kernelTrans(X, A, kTup): #calc the kernel or transform data to a higher dimensional space
     m,n = shape(X)
     K = mat(zeros((m,1)))
@@ -255,9 +267,6 @@ def testDigits(kTup=('rbf', 10)):
     print "the test error rate is: %f" % (float(errorCount)/m) 
 
 
-'''#######********************************
-Non-Kernel VErsions below
-'''#######********************************
 
 class optStructK:
     def __init__(self,dataMatIn, classLabels, C, toler):  # Initialize the structure with the parameters 
@@ -345,3 +354,4 @@ def smoPK(dataMatIn, classLabels, C, toler, maxIter):    #full Platt SMO
         elif (alphaPairsChanged == 0): entireSet = True  
         print "iteration number: %d" % iter
     return oS.b,oS.alphas
+'''
