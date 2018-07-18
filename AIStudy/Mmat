@@ -1,0 +1,7 @@
+
+import matplotlib
+from matplotlib.pyplot import *
+fig = figure()
+ax = fig.add_subplot(111)
+ax.scatter(1,2)
+show()
