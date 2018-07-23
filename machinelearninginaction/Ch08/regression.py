@@ -39,7 +39,7 @@ def lwlr(testPoint,xArr,yArr,k=1.0):
         return
     ws = xTx.I * (xMat.T * (weights * yMat))
     return testPoint * ws
-'''
+
 def lwlrTest(testArr,xArr,yArr,k=1.0):  #loops over all the data points and applies lwlr to each one
     m = shape(testArr)[0]
     yHat = zeros(m)
@@ -62,7 +62,7 @@ def ridgeRegres(xMat,yMat,lam=0.2):
     xTx = xMat.T*xMat
     denom = xTx + eye(shape(xMat)[1])*lam
     if linalg.det(denom) == 0.0:
-        print "This matrix is singular, cannot do inverse"
+        print ("This matrix is singular, cannot do inverse")
         return
     ws = denom.I * (xMat.T*yMat)
     return ws
@@ -88,7 +88,7 @@ def regularize(xMat):#regularize by columns
     inVar = var(inMat,0)      #calc variance of Xi then divide by it
     inMat = (inMat - inMeans)/inVar
     return inMat
-
+'''
 def stageWise(xArr,yArr,eps=0.01,numIt=100):
     xMat = mat(xArr); yMat=mat(yArr).T
     yMean = mean(yMat,0)
@@ -98,7 +98,7 @@ def stageWise(xArr,yArr,eps=0.01,numIt=100):
     #returnMat = zeros((numIt,n)) #testing code remove
     ws = zeros((n,1)); wsTest = ws.copy(); wsMax = ws.copy()
     for i in range(numIt):
-        print ws.T
+        print (ws.T)
         lowestError = inf; 
         for j in range(n):
             for sign in [-1,1]:
@@ -110,38 +110,38 @@ def stageWise(xArr,yArr,eps=0.01,numIt=100):
                     lowestError = rssE
                     wsMax = wsTest
         ws = wsMax.copy()
-        #returnMat[i,:]=ws.T
-    #return returnMat
+        returnMat[i,:]=ws.T
+    return returnMat
 
-#def scrapePage(inFile,outFile,yr,numPce,origPrc):
-#    from BeautifulSoup import BeautifulSoup
-#    fr = open(inFile); fw=open(outFile,'a') #a is append mode writing
-#    soup = BeautifulSoup(fr.read())
-#    i=1
-#    currentRow = soup.findAll('table', r="%d" % i)
-#    while(len(currentRow)!=0):
-#        title = currentRow[0].findAll('a')[1].text
-#        lwrTitle = title.lower()
-#        if (lwrTitle.find('new') > -1) or (lwrTitle.find('nisb') > -1):
-#            newFlag = 1.0
-#        else:
-#            newFlag = 0.0
-#        soldUnicde = currentRow[0].findAll('td')[3].findAll('span')
-#        if len(soldUnicde)==0:
-#            print "item #%d did not sell" % i
-#        else:
-#            soldPrice = currentRow[0].findAll('td')[4]
-#            priceStr = soldPrice.text
-#            priceStr = priceStr.replace('$','') #strips out $
-#            priceStr = priceStr.replace(',','') #strips out ,
-#            if len(soldPrice)>1:
-#                priceStr = priceStr.replace('Free shipping', '') #strips out Free Shipping
-#            print "%s\t%d\t%s" % (priceStr,newFlag,title)
-#            fw.write("%d\t%d\t%d\t%f\t%s\n" % (yr,numPce,newFlag,origPrc,priceStr))
-#        i += 1
-#        currentRow = soup.findAll('table', r="%d" % i)
-#    fw.close()
-    
+def scrapePage(inFile,outFile,yr,numPce,origPrc):
+   from BeautifulSoup import BeautifulSoup
+   fr = open(inFile); fw=open(outFile,'a') #a is append mode writing
+   soup = BeautifulSoup(fr.read())
+   i=1
+   currentRow = soup.findAll('table', r="%d" % i)
+   while(len(currentRow)!=0):
+       title = currentRow[0].findAll('a')[1].text
+       lwrTitle = title.lower()
+       if (lwrTitle.find('new') > -1) or (lwrTitle.find('nisb') > -1):
+           newFlag = 1.0
+       else:
+           newFlag = 0.0
+       soldUnicde = currentRow[0].findAll('td')[3].findAll('span')
+       if len(soldUnicde)==0:
+           print ("item #%d did not sell" % i)
+       else:
+           soldPrice = currentRow[0].findAll('td')[4]
+           priceStr = soldPrice.text
+           priceStr = priceStr.replace('$','') #strips out $
+           priceStr = priceStr.replace(',','') #strips out ,
+           if len(soldPrice)>1:
+               priceStr = priceStr.replace('Free shipping', '') #strips out Free Shipping
+           print "%s\t%d\t%s" % (priceStr,newFlag,title)
+           fw.write("%d\t%d\t%d\t%f\t%s\n" % (yr,numPce,newFlag,origPrc,priceStr))
+       i += 1
+       currentRow = soup.findAll('table', r="%d" % i)
+   fw.close()
+
 from time import sleep
 import json
 import urllib2
@@ -165,7 +165,7 @@ def searchForSet(retX, retY, setNum, yr, numPce, origPrc):
                     retX.append([yr, numPce, newFlag, origPrc])
                     retY.append(sellingPrice)
         except: print 'problem with item %d' % i
-    
+
 def setDataCollect(retX, retY):
     searchForSet(retX, retY, 8288, 2006, 800, 49.99)
     searchForSet(retX, retY, 10030, 2002, 3096, 269.99)
@@ -173,7 +173,7 @@ def setDataCollect(retX, retY):
     searchForSet(retX, retY, 10181, 2007, 3428, 199.99)
     searchForSet(retX, retY, 10189, 2008, 5922, 299.99)
     searchForSet(retX, retY, 10196, 2009, 3263, 249.99)
-    
+
 def crossValidation(xArr,yArr,numVal=10):
     m = len(yArr)                           
     indexList = range(m)
@@ -210,3 +210,12 @@ def crossValidation(xArr,yArr,numVal=10):
     print "the best model from Ridge Regression is:\n",unReg
     print "with constant term: ",-1*sum(multiply(meanX,unReg)) + mean(yMat)
 '''
+
+x,y = loadDataSet('ex0.txt')
+yHat = lwlrTest(x,x,y,0.003)
+xMat = mat(x)
+srtInd = xMat[:,1].argsort(0)
+xSort = xMat[srtInd][:,0,:]
+import matplotlib as mlp
+import matplotlib.pyplot as plt
+fig = plt.figure()
