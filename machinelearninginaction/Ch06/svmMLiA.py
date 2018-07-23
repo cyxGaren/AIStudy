@@ -30,8 +30,11 @@ def clipAlpha(aj,H,L):
     return aj
 
 def smoSimple(dataMatIn, classLabels, C, toler, maxIter):
-    dataMatrix = mat(dataMatIn); labelMat = mat(classLabels).transpose()
-    b = 0; m,n = shape(dataMatrix)
+    #C常数  toler容错率
+    dataMatrix = mat(dataMatIn); 
+    labelMat = mat(classLabels).transpose() #转置 .transpose() --> .T
+    b = 0; 
+    m,n = shape(dataMatrix)
     alphas = mat(zeros((m,1)))
     iter = 0
     while (iter < maxIter):
@@ -39,14 +42,14 @@ def smoSimple(dataMatIn, classLabels, C, toler, maxIter):
         for i in range(m):
             fXi = float( multiply(alphas,labelMat).T * (dataMatrix * dataMatrix[i].T)) + b  
             Ei = fXi - float(labelMat[i])#if checks if an example violates KKT conditions
-'''
-fXi为预估类别,是个数值,  W^T*X+b  w指的是预估的法向量,默认为zeros x为随机获取的某一点构成的向量, W^T*X 就是获取向量在法向量上的投影长度(矢量) b为偏移值,默认为0     
-a,b为行向量 n x 1    (a,b) = |a||b|cos(r) = a*b^T = b*a^T	-->1 x 1
-dataMatrix * dataMatrix[i].T	dataMatrix[i].T 是列向量, 上述式子的几何意义为:
-1.这里的W 不是传统意义上的法向量,而是对应所有的点产生的其影响力的向量,X指的是对于某一个点所在向量,所有的点构成的向量对其投影的长度的集合,  然后W^T*X 就是指的所有有影响的向量的投影的和 得出预估类别
-2.矩阵中的每行是存在的一个点,连接原点与其构成向量,求所有的点在当前列向量上的投影
-Ei为基于实际情况与预测得出的误差
-'''
+            """
+            fXi为预估类别,是个数值,  W^T*X+b  w指的是预估的法向量,默认为zeros x为随机获取的某一点构成的向量, W^T*X 就是获取向量在法向量上的投影长度(矢量) b为偏移值,默认为0     
+            a,b为行向量 n x 1    (a,b) = |a||b|cos(r) = a*b^T = b*a^T	-->1 x 1
+            dataMatrix * dataMatrix[i].T	dataMatrix[i].T 是列向量, 上述式子的几何意义为:
+            1.这里的W 不是传统意义上的法向量,而是对应所有的点产生的其影响力的向量,X指的是对于某一个点所在向量,所有的点构成的向量对其投影的长度的集合,  然后W^T*X 就是指的所有有影响的向量的投影的和 得出预估类别
+            2.矩阵中的每行是存在的一个点,连接原点与其构成向量,求所有的点在当前列向量上的投影
+            Ei为基于实际情况与预测得出的误差
+            """
             if ((labelMat[i]*Ei < -toler) and (alphas[i] < C)) or ((labelMat[i]*Ei > toler) and (alphas[i] > 0)):
                 j = selectJrand(i,m)
                 fXj = float(multiply(alphas,labelMat).T*(dataMatrix*dataMatrix[j,:].T)) + b
@@ -63,7 +66,8 @@ Ei为基于实际情况与预测得出的误差
                 if eta >= 0: print ("eta>=0"); continue
                 alphas[j] -= labelMat[j]*(Ei - Ej)/eta
                 alphas[j] = clipAlpha(alphas[j],H,L)
-                if (abs(alphas[j] - alphaJold) < 0.00001): print ("j not moving enough"); continue
+                if (abs(alphas[j] - alphaJold) < 0.00001): 
+                    print ("j not moving enough"); continue
                 alphas[i] += labelMat[j]*labelMat[i]*(alphaJold - alphas[j])#update i by the same amount as j
                                                                         #the update is in the oppostie direction
                 b1 = b - Ei- labelMat[i]*(alphas[i]-alphaIold)*dataMatrix[i,:]*dataMatrix[i,:].T - labelMat[j]*(alphas[j]-alphaJold)*dataMatrix[i,:]*dataMatrix[j,:].T

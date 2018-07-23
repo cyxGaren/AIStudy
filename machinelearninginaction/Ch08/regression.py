@@ -22,7 +22,7 @@ def standRegres(xArr,yArr):
     xMat = mat(xArr); yMat = mat(yArr).T
     xTx = xMat.T*xMat
     if linalg.det(xTx) == 0.0:
-        print "This matrix is singular, cannot do inverse"
+        print("This matrix is singular, cannot do inverse")
         return
     ws = xTx.I * (xMat.T*yMat)
     return ws
@@ -36,11 +36,10 @@ def lwlr(testPoint,xArr,yArr,k=1.0):
         weights[j,j] = exp(diffMat*diffMat.T/(-2.0*k**2))
     xTx = xMat.T * (weights * xMat)
     if linalg.det(xTx) == 0.0:
-        print "This matrix is singular, cannot do inverse"
         return
     ws = xTx.I * (xMat.T * (weights * yMat))
     return testPoint * ws
-
+'''
 def lwlrTest(testArr,xArr,yArr,k=1.0):  #loops over all the data points and applies lwlr to each one
     m = shape(testArr)[0]
     yHat = zeros(m)
@@ -210,3 +209,4 @@ def crossValidation(xArr,yArr,numVal=10):
     unReg = bestWeights/varX
     print "the best model from Ridge Regression is:\n",unReg
     print "with constant term: ",-1*sum(multiply(meanX,unReg)) + mean(yMat)
+'''
