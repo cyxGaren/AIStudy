@@ -32,6 +32,7 @@ def try_different_method(model):
     plt.show()
 
 
+
 from sklearn import tree
 model_DecisionTreeRegressor = tree.DecisionTreeRegressor()
 ####3.2线性回归####

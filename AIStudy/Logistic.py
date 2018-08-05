@@ -20,3 +20,5 @@ clf = LinearRegression()
 clf.fit(arr,ys)
 print(clf.coef_,clf.intercept_)
 plt.show()
+
+#搜索时
