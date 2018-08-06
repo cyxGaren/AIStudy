@@ -87,6 +87,7 @@ def load():
 		pred_list = array(pred_list).reshape([-1])
 		pred_list = scaler.inverse_transform(pred_list)
 		test_list = scaler.inverse_transform(test_y)
+		print(test_list.shape,prd_list.shape)
 		plt.plot(test_list)
 		plt.plot(pred_list)
 		plt.legend(['test','pred'])

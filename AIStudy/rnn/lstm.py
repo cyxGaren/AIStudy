@@ -93,8 +93,12 @@ def use_model():
 			pred = sess.run(pred_y,feed_dict={X:test_x_list})
 			test_x_list[-1] = vstack((test_x_list[-1,1:],pred))
 			pred_y_list.extend(pred)
-		plt.plot(scaler.inverse_transform(pred_y_list))
-		plt.plot(scaler.inverse_transform(test_y))
+		_pred_y_list = scaler.inverse_transform(pred_y_list)
+		_test_y = scaler.inverse_transform(test_y)
+		for i in range(376):
+			print(_pred_y_list[i],_test_y[i])
+		plt.plot(_pred_y_list)
+		plt.plot(_test_y)
 		plt.legend(['predy','testy'])
 		plt.savefig('../pic/pred.png')
 
