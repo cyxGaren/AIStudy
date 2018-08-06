@@ -26,7 +26,7 @@ def load_data():
 	for i in range(len(data_rate)-step):
 		x.append(data_rate[i:i+step])
 		y.append(data_rate[i+1])
-	return array(x).reshape([-1,step,input_size]),array(y).reshape([-1,output_size])
+	return array(x).reshape([-1,step,input_size]),array(y).reshape([-1,output_size]),scaler
 
 ###################神经网络######################
 
@@ -59,23 +59,25 @@ def lstm(batch):
 
 ###################训练###############################
 def train():
+	global batch_size
 	pred_y = lstm(batch_size)
-	loss = tf.reduce_mean(tf.sqrt(tf.reshape(pred_y,[-1])-tf.reshape(Y,[-1])))
+	loss = tf.reduce_mean(tf.square(tf.reshape(pred_y,[-1])-tf.reshape(Y,[-1])))
 	optimizer = tf.train.AdamOptimizer(0.006)
 	train_op = optimizer.minimize(loss)
 	init = tf.global_variables_initializer()
 	saver = tf.train.Saver()
 	with tf.Session() as sess:
 		sess.run(init)
-		for i in range(1000):
+		num = 1000
+		for i in range(num):
 			start = 0
 			end = start+batch_size
 			while end<len(train_y):
-				sess.run(train_op,feed_dict={X:train_x[start:end],Y:train_y[start:end]})
+				_loss,_ = sess.run([loss,train_op],feed_dict={X:train_x[start:end],Y:train_y[start:end]})
 				start =end
 				end = end+batch_size
 			if (i+1)%50 == 0:			
-				print((i+1)/10,'%')
+				print((i+1)/(num/100),'%')
 			saver.save(sess,'../ckpt/rnn.ckpt')
 
 ##################预测##################################
@@ -87,16 +89,16 @@ def use_model():
 		#训练集最后一行为测试样本
 		test_x_list = train_x[-1:] 
 		pred_y_list = []
-		for i in range(len(test_y)):
+		for i in range(10):
 			pred = sess.run(pred_y,feed_dict={X:test_x_list})
 			test_x_list[-1] = vstack((test_x_list[-1,1:],pred))
 			pred_y_list.extend(pred)
-		plt.plot(pred_y_list)
-		plt.plot(test_y)
+		plt.plot(scaler.inverse_transform(pred_y_list))
+		plt.plot(scaler.inverse_transform(test_y))
 		plt.legend(['predy','testy'])
 		plt.savefig('../pic/pred.png')
 
-x,y = load_data()
+x,y,scaler = load_data()
 index = (int)(3.0/7*len(x))
 train_x,train_y,test_x,test_y = x[:index],y[:index],x[index:],y[index:]
 #train()
