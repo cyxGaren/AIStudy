@@ -89,7 +89,7 @@ def use_model():
 		#训练集最后一行为测试样本
 		test_x_list = train_x[-1:] 
 		pred_y_list = []
-		for i in range(10):
+		for i in range(len(test_y)):
 			pred = sess.run(pred_y,feed_dict={X:test_x_list})
 			test_x_list[-1] = vstack((test_x_list[-1,1:],pred))
 			pred_y_list.extend(pred)
