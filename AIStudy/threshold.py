@@ -81,17 +81,18 @@ def load():
 	saver = tf.train.Saver()
 	with tf.Session() as sess:
 		saver.restore(sess,'ckpt/8-6.ckpt')
-		for i in range(100):
-			print(scaler.inverse_transform(train_y[i]),scaler.inverse_transform(sess.run(pred,feed_dict={X:train_x[i:i+1]})))
-		
-
+		yy = []
+		for i in range(len(train_y)):
+			yy.extend(sess.run(pred,feed_dict={X:train_x[i:i+1]}))
+		yy = array(yy).reshape([-1])
+		plt.plot(train_y)
+		plt.plot(yy)
+		plt.legend('y','yy')
+		plt.savefig('pic/lstm.png')
 
 train_x,train_y,scaler = load_data()
 #train()
-#load()
-plt.plot(train_y)
-plt.legend('y')
-plt.savefig('pic/lstm.png')
+load()
 
 #load_data()
 
