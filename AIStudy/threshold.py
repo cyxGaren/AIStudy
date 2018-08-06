@@ -89,7 +89,7 @@ def load():
 		y = scaler.inverse_transform(train_y)
 		plt.plot(y)
 		plt.plot(yy)
-		plt.legend('trainy','yy')
+		plt.legend(['真实','预测'])
 		plt.savefig('pic/lstm.png')
 
 train_x,train_y,scaler = load_data()
