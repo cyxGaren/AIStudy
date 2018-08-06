@@ -85,9 +85,11 @@ def load():
 		for i in range(len(train_y)):
 			yy.extend(sess.run(pred,feed_dict={X:train_x[i:i+1]}))
 		yy = array(yy).reshape([-1])
-		plt.plot(train_y)
+		yy = scaler.inverse_transform(yy)
+		y = scaler.inverse_transform(train_y)
+		plt.plot(y)
 		plt.plot(yy)
-		plt.legend('y','yy')
+		plt.legend('trainy','yy')
 		plt.savefig('pic/lstm.png')
 
 train_x,train_y,scaler = load_data()
