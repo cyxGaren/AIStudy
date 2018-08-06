@@ -64,7 +64,7 @@ def train():
 	saver = tf.train.Saver()
 	with tf.Session() as sess:
 		sess.run(init)
-		for i in range(10000):
+		for i in range(1000):
 			start = 0
 			end = start+batch_size
 			while end<len(train_y):
@@ -81,18 +81,20 @@ def load():
 	saver = tf.train.Saver()
 	with tf.Session() as sess:
 		saver.restore(sess,'ckpt/8-6.ckpt')
-		yy = []
-		for i in range(len(train_y)):
-			yy.extend(sess.run(pred,feed_dict={X:train_x[i:i+1]}))
-		yy = array(yy).reshape([-1])
-		yy = scaler.inverse_transform(yy)
-		y = scaler.inverse_transform(train_y)
-		plt.plot(y)
-		plt.plot(yy)
-		plt.legend(['no1','no2'])
+		pred_list = []
+		for i in range(len(test_x)):
+			pred_list.extend(sess.run(pred,feed_dict={X:test_x[i:i+1]}))
+		pred_list = array(pred_list).reshape([-1])
+		pred_list = scaler.inverse_transform(pred_list)
+		test_list = scaler.inverse_transform(test_y)
+		plt.plot(test_list)
+		plt.plot(pred_list)
+		plt.legend(['test','pred'])
 		plt.savefig('pic/lstm.png')
 
-train_x,train_y,scaler = load_data()
+x,y,scaler = load_data()
+index = (int)((5.0/7)*len(x))
+train_x,test_x,train_y,test_y = x[:index],x[index:],y[:index],y[index:]
 #train()
 load()
 
