@@ -2,7 +2,7 @@ from numpy import *
 import tensorflow as tf
 import matplotlib
 matplotlib.use('Agg')
-from matplotlib.pyplot import *
+import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn import preprocessing
 
@@ -72,8 +72,8 @@ def train():
 				start = end
 				end += batch_size	
 			saver.save(sess,'ckpt/8-6.ckpt')
-			if i % 500 ==0:
-				print(i/10000,"%") 
+			if i+1 % 500 ==0:
+				print(i/100,"%") 
 
 
 def load():
@@ -81,14 +81,17 @@ def load():
 	saver = tf.train.Saver()
 	with tf.Session() as sess:
 		saver.restore(sess,'ckpt/8-6.ckpt')
-		for i in range(10):
+		for i in range(100):
 			print(scaler.inverse_transform(train_y[i]),scaler.inverse_transform(sess.run(pred,feed_dict={X:train_x[i:i+1]})))
 		
 
 
 train_x,train_y,scaler = load_data()
-train()
+#train()
 #load()
+plt.plot(train_y)
+plt.legend('y')
+plt.savefig('pic/lstm.png')
 
 #load_data()
 
