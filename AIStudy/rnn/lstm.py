@@ -93,7 +93,7 @@ def use_model():
 			pred_y_list.extend(pred)
 		plt.plot(pred_y_list)
 		plt.plot(test_y)
-		plt.legend('pred_y','test_y')
+		plt.legend(['predy','testy'])
 		plt.savefig('../pic/pred.png')
 
 x,y = load_data()
