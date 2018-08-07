@@ -89,17 +89,19 @@ def use_model():
 		#训练集最后一行为测试样本
 		test_x_list = train_x[-1:] 
 		pred_y_list = []
+		pred_test_y = []
 		for i in range(len(test_y)):
 			pred = sess.run(pred_y,feed_dict={X:test_x_list})
 			test_x_list[-1] = vstack((test_x_list[-1,1:],pred))
 			pred_y_list.extend(pred)
+			pred_test_y.extend(sess.run(pred_y,feed_dict={X:test_x[i:i+1]}))
 		_pred_y_list = scaler.inverse_transform(pred_y_list)
 		_test_y = scaler.inverse_transform(test_y)
-		for i in range(376):
-			print(_pred_y_list[i],_test_y[i])
+		_pred_test_y = scaler.inverse_transform(pred_test_y)
 		plt.plot(_pred_y_list)
 		plt.plot(_test_y)
-		plt.legend(['predy','testy'])
+		plt.plot(_pred_test_y)
+		plt.legend(['predy','testy','predtesty'])
 		plt.savefig('../pic/pred.png')
 
 x,y,scaler = load_data()
