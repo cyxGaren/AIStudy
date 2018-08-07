@@ -17,6 +17,7 @@ rnn_unit = 5
 
 #创建数据
 def load_data():
+	random.seed(5)
 	x_data = array(range(400))
 	y_data = sin(x_data)+sqrt(x_data)*10+random.rand(400)
 	y_data = array(y_data).reshape([-1,1])
@@ -68,7 +69,7 @@ def train(model_name):
 	saver = tf.train.Saver()
 	with tf.Session() as sess:
 		sess.run(init)
-		num = 1000
+		num = 10000
 		for i in range(num):
 			start = 0
 			end = start+batch_size
@@ -102,14 +103,17 @@ def use_model(model_name,pic_name):
 		_test_y = scaler.inverse_transform(test_y)
 		pred_y_list_1 = scaler.inverse_transform(pred_y_list_1)
 		pred_y_list_2 = scaler.inverse_transform(pred_y_list_2)
-		plt.plot(_test_y)
-		plt.plot(pred_y_list_1)
-		plt.plot(pred_y_list_2)
-		plt.legend(['testY','allPredY','testxY'])
+		_train_y = scaler.inverse_transform(train_y)
+		plt.plot(range(0,index),_train_y)
+		plt.plot(range(index,_length),_test_y)
+		plt.plot(range(index,_length),pred_y_list_1)
+		plt.plot(range(index,_length),pred_y_list_2)
+		plt.legend(['trainY','testY','allPredY','testxY'])
 		plt.savefig('../pic/'+pic_name+'.png')
 
 x,y,scaler = load_data()
-index = (int)(3.0/7*len(x))
+_length = len(x)
+index = (int)(5.0/7*len(x))
 train_x,train_y,test_x,test_y = x[:index],y[:index],x[index:],y[index:]
 #train('test')
 use_model('test','test')
