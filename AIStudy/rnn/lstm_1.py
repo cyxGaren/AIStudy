@@ -110,10 +110,11 @@ def use_model(model_name,pic_name):
 		plt.plot(range(index,_length),pred_y_list_2)
 		plt.legend(['trainY','testY','allPredY','testxY'])
 		plt.savefig('../pic/'+pic_name+'.png')
+		print('done')
 
 x,y,scaler = load_data()
 _length = len(x)
 index = (int)(5.0/7*len(x))
 train_x,train_y,test_x,test_y = x[:index],y[:index],x[index:],y[index:]
 #train('test')
-use_model('test','test')
+use_model('test','test2')
