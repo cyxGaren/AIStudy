@@ -1,8 +1,8 @@
-import load
+import load_data
 import tensorflow as tf
 
 
-l = load.Load('../dataset_1.csv')
+l = load_data.Load('../dataset_1.csv')
 
 x,y = l.load_data()
 scaler = l.get_scaler()
@@ -13,7 +13,7 @@ batch_size = 30
 output_size = 1
 rnn_unit = 5
 
-num = 1
+num = 10000
 
 index = (int)((5.0/7.0)*len(x))
 train_x,train_y = x[:index],y[:index]
