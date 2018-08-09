@@ -80,7 +80,6 @@ def train():
 				print((i+1)/(num/100),'%')
 			saver.save(sess,'../ckpt/rnn.ckpt')
 
-<<<<<<< HEAD:AIStudy/rnn/lstm.py
 ##################预测##################################
 def use_model():
 	pred_y = lstm(1)
@@ -105,7 +104,6 @@ def use_model():
 		plt.legend(['predy','testy','predtesty'])
 		plt.savefig('../pic/pred.png')
 =======
->>>>>>> 25edc1c18adefc51c637f5d51cb4c1a626d558d9:AIStudy/rnn/train.py
 
 x,y,scaler = load_data()
 index = (int)(3.0/7*len(x))
