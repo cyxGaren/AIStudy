@@ -10,7 +10,6 @@ import matplotlib.pyplot as plt
 l = load_data.Load('../dataset_1.csv')
 x,y = l.load_data()
 scaler = l.get_scaler()
-x_pred = x[0:1]
 
 
 step = l.step
@@ -21,6 +20,9 @@ rnn_unit = 5
 
 num = 1
         
+x_pred = x[0]
+x_pred = x_pred.reshape([-1,step,input_size])
+
 weight = {
 	'in':   tf.Variable(tf.random_normal([input_size,rnn_unit]),name='w_in'),
 	'out':  tf.Variable(tf.random_normal([rnn_unit,output_size]),name='w_out')
@@ -52,13 +54,14 @@ def lstm(batch):
 def pred():
 	rnn,pred_y = lstm(1)	
 	saver = tf.train.Saver()
+	global x_pred
 	with tf.Session() as sess:
 		saver.restore(sess,'/ckpt/rnn.ckpt')
 		predy_by_x_list = []
 		predy_by_y_list = []
 		for i in range(len(y)):
 			predy_by_x_list.append(sess.run(pred_y,feed_dict={X:x[i:i+1]}))
-			pred_by_y = sess.run(pred_y,feed_dict={X:x_pred[0:1]})
+			pred_by_y = sess.run(pred_y,feed_dict={X:x_pred})
 			predy_by_y_list.append(pred_by_y)
 			x_pred[0] = vstack((x_pred[0][1:],pred_by_y))
 		plt.plot(scaler.inverse_transform(y))
