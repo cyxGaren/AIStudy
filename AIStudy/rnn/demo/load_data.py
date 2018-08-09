@@ -6,9 +6,16 @@ import sklearn
 from sklearn import preprocessing
 
 
+a1 = 1
+a2 = 1
+a3 = 5
+a4 = 'data/data.csv'
+
+
 class Load_data:
 	arga = {}
-	def __init__(self,input_size,output_size,step,file_name):
+	scaler = {}
+	def __init__(self,input_size=a1,output_size=a2,step=a3,file_name=a4):
 		self.arga['input_size'] = input_size
 		self.arga['output_size'] = output_size
 		self.arga['step'] = step
@@ -23,22 +30,23 @@ class Load_data:
 		y = data['price']
 		x = array(x).reshape([-1,self.arga['input_size']])
 		y = array(y).reshape([-1,self.arga['output_size']])
-		scaler = {}
 
 		##### 	set/get scaler 	#####
 		if is_init != 0:
-			scaler['x'] = preprocessing.StandardScaler().fit(x)
-			scaler['y'] = preprocessing.StandardScaler().fit(y)
+			self.scaler['x'] = preprocessing.StandardScaler().fit(x)
+			self.scaler['y'] = preprocessing.StandardScaler().fit(y)
 			f = open('data/scaler.pkl','wb')
-			pickle.dump(scaler,f)
+			pickle.dump(self.scaler,f)
+			print('set scaler')
 		else:
 			f = open('data/scaler.pkl','rb')
-			scaler = pickle.load(f)
+			self.scaler = pickle.load(f)
+			print('get scaler')
 		f.close()
 		
 		#####	正则化		#####
-		x = scaler['x'].transform(x)
-		y = scaler['y'].transform(y)
+		x = self.scaler['x'].transform(x)
+		y = self.scaler['y'].transform(y)
 
 		#####	step	#####
 		x_list = []
@@ -48,11 +56,12 @@ class Load_data:
 			y_list.append(y[i+1])
 
 		return array(x_list).reshape([-1,self.arga['step'],self.arga['input_size']]),\
-			   array(y_list).reshape([-1,self.arga['output_size']])\
-			,scaler
+			   array(y_list).reshape([-1,self.arga['output_size']])
 		
 	def get_args(self):
 		print('args is ',self.arga)
-	
+
+	def get_scaler(self):
+		return self.scaler
 
 		

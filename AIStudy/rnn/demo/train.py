@@ -62,14 +62,14 @@ def train():
                 sess.run(optimizer,feed_dict={X:x[start:end],Y:y[start:end]})
                 start = end
                 end += batch_size
-            if i==0 or i%50 == 0 or i+1 == x_len:
-                print((int)(((i+1)/(x_len)*100)),'%')
+            if i%(int)(x_len/20)==0 or i+1 == x_len:
+                print(('100' if i+1 == x_len else i/x_len),'%')
                 saver.save(sess, sess_save_file)
 
 
 
 l = load_data.Load_data(input_size,output_size,step,file_name)
-x,y,scaler = l.create_data()
+x,y = l.create_data(1)
 
 x_len = len(x)
 
