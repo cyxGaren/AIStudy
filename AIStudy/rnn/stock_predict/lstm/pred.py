@@ -41,28 +41,30 @@ def lstm(batch):
 	cell = tf.nn.rnn_cell.BasicLSTMCell(rnn_unit)
 	h0 = cell.zero_state(batch,'float32')
 	_,last = tf.nn.dynamic_rnn(cell,rnn_data,initial_state=h0)
-	last = last.h
-	output_data = tf.add(tf.matmul(last,weight['out']),baies['out'])
-	return output_data
+	last_val = last[-1]
+	out = []
+	out.append(last_val)
+	out.append(_[-1])
+	output_data = tf.add(tf.matmul(last_val,weight['out']),baies['out'])
+	return out,output_data
 
+##############################预测##################
+def pred():
+	rnn,pred_y = lstm(1)	
+	saver = tf.train.Saver()
+	with tf.Session() as sess:
+		saver.restore(sess,'/ckpt/rnn.ckpt')
+		predy_by_x_list = []
+		predy_by_y_list = []
+		for i in range(len(y)):
+			predy_by_x_list.append(sess.run(pred_y,feed_dict={X:x[i:i+1]}))
+			pred_by_y = sess.run(pred_y,feed_dict={X:x_pred[0:1]})
+			predy_by_y_list.append(pred_by_y)
+			x_pred[0] = vstack((x_pred[0][1:],pred_by_y))
+		plt.plot(scaler.inverse_transform(y))
+		plt.plot(scaler.inverse_transform(predy_by_x_list).reshape([-1]))
+		plt.plot(scaler.inverse_transform(predy_by_y_list).reshape([-1]))
+		plt.legend(['Y','xY','yY'])
+		plt.savefig('demo.png')
 
-saver = tf.train.Saver(tf.global_variables())
-pred_y = lstm(1)	
-init = tf.global_variables_initializer()
-with tf.Session() as sess:
-	sess.run(init)
-	saver.restore(sess,'/ckpt/rnn.ckpt')
-	predy_by_x_list = []
-	predy_by_y_list = []
-	for i in range(len(x)):
-		predy_by_x_list.append(sess.run(pred_y,feed_dict={X:x[i:i+1]}))
-		pred_by_y = sess.run(pred_y,feed_dict={X:x_pred[0:1]})
-		predy_by_y_list.append(pred_by_y)
-		x_pred[0] = vstack((x_pred[0][1:],pred_by_y))
-	plt.plot(scaler.inverse_transform(y))
-	plt.plot(scaler.inverse_transform(predy_by_x_list).reshape([-1]))
-	plt.plot(scaler.inverse_transform(predy_by_y_list).reshape([-1]))
-	plt.legend(['Y','xY','yY'])
-	plt.savefig('demo.png')
-
-
+pred()

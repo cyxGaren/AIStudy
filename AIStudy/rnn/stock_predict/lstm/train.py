@@ -1,5 +1,6 @@
 import load_data
 import tensorflow as tf
+from numpy import *
 
 
 l = load_data.Load('../dataset_1.csv')
@@ -13,7 +14,7 @@ batch_size = 30
 output_size = 1
 rnn_unit = 5
 
-num = 10000
+num = 1000
 
 index = (int)((5.0/7.0)*len(x))
 train_x,train_y = x[:index],y[:index]
@@ -33,6 +34,7 @@ baies = {
 X = tf.placeholder('float32',[None,step,input_size],name='X')
 Y = tf.placeholder('float32',[None,output_size],name='Y')
 
+m = tf.Variable(123,name='M')
 
 ###################################### RNN func ###################################
 def lstm(batch):
@@ -60,11 +62,14 @@ def train():
 			start = 0
 			end = start+batch_size
 			while(end<len(train_y)):
-				sess.run(train_op,feed_dict={X:train_x[start:end],Y:train_y[start:end]})
+				_,_loss = sess.run([train_op,loss],feed_dict={X:train_x[start:end],Y:train_y[start:end]})
 				start = end
 				end += batch_size
-			if i==0 or (i+1)%50 == 0:
+			if i==0 or (i+1)%50 ==0 or (i+1)==num:
 				print((i+1)/num*100,'%')
-				if i==0 or (i+1)/num*100%10 == 0:
-					saver.save(sess,'/ckpt/rnn.ckpt')
+				if i==0 or (i+1)/num*100%100 == 0:
+					saver.save(sess,'ckpt/rnn.ckpt')
+
+
 train()
+
