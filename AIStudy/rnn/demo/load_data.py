@@ -39,7 +39,9 @@ class Load_data:
 		#####	正则化		#####
 		x = scaler['x'].transform(x)
 		y = scaler['y'].transform(y)
-		return x,y,scaler
+		return array(x).reshape([-1,self.arga['step'],self.arga['input_size']]),\
+			   array(y).reshape([-1,self.arga['step'],self.arga['output_size']])\
+			,scaler
 		
 	def get_args(self):
 		print('args is ',self.arga)

@@ -103,7 +103,6 @@ def use_model():
 		plt.plot(_pred_test_y)
 		plt.legend(['predy','testy','predtesty'])
 		plt.savefig('../pic/pred.png')
-=======
 
 x,y,scaler = load_data()
 index = (int)(3.0/7*len(x))
