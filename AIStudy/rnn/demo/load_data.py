@@ -39,8 +39,16 @@ class Load_data:
 		#####	正则化		#####
 		x = scaler['x'].transform(x)
 		y = scaler['y'].transform(y)
-		return array(x).reshape([-1,self.arga['step'],self.arga['input_size']]),\
-			   array(y).reshape([-1,self.arga['step'],self.arga['output_size']])\
+
+		#####	step	#####
+		x_list = []
+		y_list = []
+		for i in range(len(x)-self.arga['step']):
+			x_list.append(x[i:i+self.arga['step']])
+			y_list.append(y[i+1])
+
+		return array(x_list).reshape([-1,self.arga['step'],self.arga['input_size']]),\
+			   array(y_list).reshape([-1,self.arga['output_size']])\
 			,scaler
 		
 	def get_args(self):

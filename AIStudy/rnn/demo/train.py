@@ -34,9 +34,9 @@ Y = tf.placeholder('float32',[None,output_size])
 #####神经网络#####
 def lstm(batch):
     #三维转二维
-    X = tf.reshape(X,[-1,input_size])
+    _X = tf.reshape(X,[-1,input_size])
     #二维转三维
-    input_data = tf.reshape(tf.add(tf.matmul(X,weight['in'])),[-1,step,rnn_unit])
+    input_data = tf.reshape(tf.add(tf.matmul(_X,weight['in']),baies['in']),[-1,step,rnn_unit])
     #定义神经元
     cell = tf.nn.rnn_cell.BasicLSTMCell(rnn_unit)
     h0 = cell.zero_state(batch,'float32')
@@ -47,7 +47,7 @@ def lstm(batch):
 #####训练#####
 def train():
     pred_y = lstm(batch_size)
-    loss = tf.reduce(tf.square(tf.reshape(pred_y,[-1])-tf.reshape(Y,[-1])))
+    loss = tf.reduce_mean(tf.square(tf.reshape(pred_y,[-1])-tf.reshape(Y,[-1])))
     optimizer = tf.train.AdamOptimizer(lr).minimize(loss)
     init = tf.global_variables_initializer()
     saver = tf.train.Saver()
@@ -56,18 +56,18 @@ def train():
         sess.run(init)
         for i in range(train_count):
             #####batch流#####
-            strat = 0
+            start = 0
             end = start+batch_size
             while end<x_len:
-                sess.run(optimizer,feed_dict={X:x[start:end],Y:y[satrt:end]})
+                sess.run(optimizer,feed_dict={X:x[start:end],Y:y[start:end]})
                 start = end
                 end += batch_size
-            if i==0 or (i+1)%50==0:
-                print((i+1)/x_len*100+'%')
-                saver.save(sess,sess_save_file)
+            if i==0 or (i+1)%((int)(x_len/5)) ==0:
+                saver.save(sess, sess_save_file)
+                print((int)((i+1)/(x_len)*100),'%')
 
 
-l = load_data(input_size,output_size,step,file_name)
+l = load_data.Load_data(input_size,output_size,step,file_name)
 x,y,scaler = l.create_data()
 
 x_len = len(x)
