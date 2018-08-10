@@ -10,4 +10,8 @@ class T:
     def __init__(self,scaler,x,y):
         _scaler = scaler['x']
         p = pred.Pred()
-        a = _scaler.inverse_transform(p.get_pred(x[0:1])),_scaler.inverse_transform(y[0:1])
+        print(_scaler.inverse_transform(p.get_pred(x[0:1])),_scaler.inverse_transform(y[0:1]))
+
+t = T(scaler,x,y)
+#with tf.variable_scope("a"):
+#	t = T(scaler,x,y)
