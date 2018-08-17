@@ -110,7 +110,7 @@ def use_model(model_name,pic_name):
 		plt.plot(range(index,_length),pred_y_list_2)
 		plt.legend(['trainY','testY','allPredY','testxY'])
 		plt.savefig('../pic/'+pic_name+'.png')
-		print('done')
+		print('done ')
 
 x,y,scaler = load_data()
 _length = len(x)
