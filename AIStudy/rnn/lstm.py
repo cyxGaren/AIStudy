@@ -110,8 +110,6 @@ def use_model():
 		plt.legend(['trainY','testY','allPredY','testxY'])
 		plt.subplot(234)
 		plt.plot(range(index,_length),_test_y,color='blue')
-		plt.subplot(235)
-		plt.plot(range(index,_length),pred_y_list_1,color='red')
 		plt.subplot(236)
 		plt.plot(range(index,_length),pred_y_list_2,color='yellow')
 		plt.savefig('../pic/pred4.png')
