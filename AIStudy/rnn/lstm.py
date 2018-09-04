@@ -111,7 +111,7 @@ def use_model():
 		plt.plot(range(index,_length),_test_y,color='blue')
 		plt.subplot(236)
 		plt.plot(range(index,_length),pred_y_list_2,color='green')
-		plt.savefig('../pic/pred4.png')
+		plt.savefig('../pic/pred5.png')
 
 x,y,scaler = load_data()
 index = (int)(3.0/7*len(x))
