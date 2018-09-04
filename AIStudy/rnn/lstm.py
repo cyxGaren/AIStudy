@@ -17,7 +17,7 @@ rnn_unit = 5
 
 #读取csv数据(已按时间分离)
 def load_data():
-	data_rate = pd.read_csv('data.csv')['RATE']
+	data_rate = pd.read_csv('data_1.csv')['RATE']
 	#标准化,减少误差
 	data_rate=array(data_rate).reshape([-1,1])
 	scaler = preprocessing.StandardScaler().fit(data_rate)
@@ -107,7 +107,7 @@ def use_model():
 		plt.plot(range(index,_length),pred_y_list_1,color='red')
 		plt.plot(range(index,_length),pred_y_list_2,color='yellow')
 		plt.legend(['trainY','testY','allPredY','testxY'])
-		plt.savefig('../pic/pred3.png')
+		plt.savefig('../pic/pred4.png')
 
 x,y,scaler = load_data()
 index = (int)(3.0/7*len(x))
