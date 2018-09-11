@@ -3,7 +3,7 @@ import tensorflow as tf
 from numpy import *
 
 
-l = load_data.Load('../data.csv')
+l = load_data.Load('data.csv')
 
 x,y = l.load_data()
 scaler = l.get_scaler()

@@ -15,18 +15,17 @@ rnn_unit = 5
 
 
 
-#创建数据
+#读取csv数据(已按时间分离)
 def load_data():
-	random.seed(5)
-	x_data = array(range(400))
-	y_data = sin(x_data)+sqrt(x_data)*10+random.rand(400)
-	y_data = array(y_data).reshape([-1,1])
-	scaler = preprocessing.StandardScaler().fit(y_data)
-	y_data = scaler.transform(y_data)
+	data_rate = pd.read_csv('data.csv')['RATE']
+	#标准化,减少误差
+	data_rate=array(data_rate).reshape([-1,1])
+	scaler = preprocessing.StandardScaler().fit(data_rate)
+	data_rate = scaler.transform(data_rate)
 	x,y = [],[]
-	for i in range(len(y_data)-step):
-		x.append(y_data[i:i+step])
-		y.append(y_data[i+1])
+	for i in range(len(data_rate)-step):
+		x.append(data_rate[i:i+step])
+		y.append(data_rate[i+1])
 	return array(x).reshape([-1,step,input_size]),array(y).reshape([-1,output_size]),scaler
 
 ###################神经网络######################
@@ -59,7 +58,7 @@ def lstm(batch):
 	return pred_y
 
 ###################训练###############################
-def train(model_name):
+def train():
 	global batch_size
 	pred_y = lstm(batch_size)
 	loss = tf.reduce_mean(tf.square(tf.reshape(pred_y,[-1])-tf.reshape(Y,[-1])))
@@ -69,7 +68,7 @@ def train(model_name):
 	saver = tf.train.Saver()
 	with tf.Session() as sess:
 		sess.run(init)
-		num = 10000
+		num = 1000
 		for i in range(num):
 			start = 0
 			end = start+batch_size
@@ -79,14 +78,14 @@ def train(model_name):
 				end = end+batch_size
 			if (i+1)%50 == 0:			
 				print((i+1)/(num/100),'%')
-			saver.save(sess,'../ckpt/'+model_name+'.ckpt')
+			saver.save(sess,'../ckpt/rnn.ckpt')
 
 ##################预测##################################
-def use_model(model_name,pic_name):
+def use_model():
 	pred_y = lstm(1)
 	saver = tf.train.Saver()
 	with tf.Session() as sess:
-		saver.restore(sess,'../ckpt/'+model_name+'.ckpt')
+		saver.restore(sess,'../ckpt/rnn.ckpt')
 		#第一组以 训练集最后一行为测试样本,预测后一天的阈值(即根据前20时间段来估计下一次的阈值)
 		#随后将每次生成的预测值插入输入集队列尾(即保持一直使用预测集中的数据)
 		
@@ -103,18 +102,20 @@ def use_model(model_name,pic_name):
 		_test_y = scaler.inverse_transform(test_y)
 		pred_y_list_1 = scaler.inverse_transform(pred_y_list_1)
 		pred_y_list_2 = scaler.inverse_transform(pred_y_list_2)
-		_train_y = scaler.inverse_transform(train_y)
-		plt.plot(range(0,index),_train_y)
-		plt.plot(range(index,_length),_test_y)
-		plt.plot(range(index,_length),pred_y_list_1)
-		plt.plot(range(index,_length),pred_y_list_2)
-		plt.legend(['trainY','testY','allPredY','testxY'])
-		plt.savefig('../pic/'+pic_name+'.png')
-		print('done ')
+		plt.subplot(211)
+		plt.plot(range(0,index),scaler.inverse_transform(train_y),color='k')
+		plt.plot(range(index,_length),_test_y,color='blue')
+		plt.plot(range(index,_length),pred_y_list_2,color='green')
+		plt.legend(['trainY','testY','testxY'])
+		plt.subplot(234)
+		plt.plot(range(index,_length),_test_y,color='blue')
+		plt.subplot(236)
+		plt.plot(range(index,_length),pred_y_list_2,color='green')
+		plt.savefig('../pic/pred5.png')
 
 x,y,scaler = load_data()
-_length = len(x)
-index = (int)(5.0/7*len(x))
+index = (int)(3.0/7*len(x))
+_length = len(y)
 train_x,train_y,test_x,test_y = x[:index],y[:index],x[index:],y[index:]
-#train('test')
-use_model('test','test2')
+train()
+#use_model()

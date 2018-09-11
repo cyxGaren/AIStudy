@@ -86,25 +86,36 @@ def use_model():
 	saver = tf.train.Saver()
 	with tf.Session() as sess:
 		saver.restore(sess,'../ckpt/rnn.ckpt')
-		#训练集最后一行为测试样本
-		test_x_list = train_x[-1:] 
-		pred_y_list = []
-		pred_test_y = []
+		#第一组以 训练集最后一行为测试样本,预测后一天的阈值(即根据前20时间段来估计下一次的阈值)
+		#随后将每次生成的预测值插入输入集队列尾(即保持一直使用预测集中的数据)
+		
+		#第二组以 测试集的输入集合为样本 预测后一天(即使用前20个真实值来预测第21个时间段的阈值)
+		test_x_list_1 = train_x[-1:] 
+		test_x_list_2 = test_x
+		pred_y_list_1 = []
+		pred_y_list_2 = []
 		for i in range(len(test_y)):
-			pred = sess.run(pred_y,feed_dict={X:test_x_list})
-			test_x_list[-1] = vstack((test_x_list[-1,1:],pred))
-			pred_y_list.extend(pred)
-			pred_test_y.extend(sess.run(pred_y,feed_dict={X:test_x[i:i+1]}))
-		_pred_y_list = scaler.inverse_transform(pred_y_list)
+			pred = sess.run(pred_y,feed_dict={X:test_x_list_1})
+			test_x_list_1[-1] = vstack((test_x_list_1[-1,1:],pred))
+			pred_y_list_1.extend(pred)
+			pred_y_list_2.extend(sess.run(pred_y,feed_dict={X:test_x_list_2[i:i+1]}))
 		_test_y = scaler.inverse_transform(test_y)
-		_pred_test_y = scaler.inverse_transform(pred_test_y)
-		plt.plot(_pred_y_list)
-		plt.plot(_test_y)
-		plt.plot(_pred_test_y)
-		plt.legend(['predy','testy','predtesty'])
-		plt.savefig('../pic/pred.png')
+		pred_y_list_1 = scaler.inverse_transform(pred_y_list_1)
+		pred_y_list_2 = scaler.inverse_transform(pred_y_list_2)
+		plt.subplot(211)
+		plt.plot(range(0,index),scaler.inverse_transform(train_y),color='k')
+		plt.plot(range(index,_length),_test_y,color='blue')
+		plt.plot(range(index,_length),pred_y_list_2,color='green')
+		plt.legend(['trainY','testY','testxY'])
+		plt.subplot(234)
+		plt.plot(range(index,_length),_test_y,color='blue')
+		plt.subplot(236)
+		plt.plot(range(index,_length),pred_y_list_2,color='green')
+		plt.savefig('../pic/pred5.png')
 
 x,y,scaler = load_data()
 index = (int)(3.0/7*len(x))
+_length = len(y)
 train_x,train_y,test_x,test_y = x[:index],y[:index],x[index:],y[index:]
-train()
+#train()
+use_model()
