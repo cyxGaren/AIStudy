@@ -69,6 +69,8 @@ def train():
 	with tf.Session() as sess:
 		sess.run(init)
 		num = 1000
+		print(sess.run(X,feed_dict={X:train_x[0:1]}))
+		'''
 		for i in range(num):
 			start = 0
 			end = start+batch_size
@@ -79,6 +81,7 @@ def train():
 			if (i+1)%50 == 0:			
 				print((i+1)/(num/100),'%')
 			saver.save(sess,'../ckpt/rnn.ckpt')
+		'''
 
 ##################预测##################################
 def use_model():
