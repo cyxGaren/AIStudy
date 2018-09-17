@@ -37,7 +37,7 @@ def try_different_method(model):
 	print(model.__class__.__name__+' time is : '+str(time.time()-t0))
 	dot_data = tree.export_graphviz(model,out_file=None)
 	graph = pydotplus.graph_from_dot_data(dot_data)
-	graph.write_png("ppp.png")
+	graph.write_pdf("ppp.pdf")
 
     
 
