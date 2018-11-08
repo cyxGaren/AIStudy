@@ -7,6 +7,7 @@ from numpy import *
 from sklearn import preprocessing
 import time
 import sys
+import pickle
 
 step = 10       
 batch_size = 30 
@@ -107,13 +108,13 @@ def use_model(name):
                 plt.plot(range(0,index),scaler.inverse_transform(train_y),color='k')
                 plt.plot(range(index,_length),_test_y,color='blue')
                 plt.plot(range(index,_length),pred_y_list_2,color='green')
-                plt.legend(['trainY','testY','testxY'])
+                plt.legend(['trainingData','testY','predY'])
                 plt.subplot(234)
                 plt.plot(range(index,_length),_test_y,color='blue')
                 plt.subplot(236)
                 plt.plot(range(index,_length),pred_y_list_2,color='green')
-                plt.savefig('./pic/pred5.png')
-  
+                plt.savefig('./pic/'+name+'.png')
+                return pred_y_list_2
 
 
 if(sys.argv[3]=='train'):
@@ -134,4 +135,7 @@ if(sys.argv[3]=='pred'):
         index = (int)(3.0/7*len(x))
         _length = len(y)
         train_x,train_y,test_x,test_y = x[:index],y[:index],x[index:],y[index:] 
-        use_model(name)
+        data = use_model(name)
+        f=open('./ckpt/pred_'+name+'.txt','wb')
+        pickle.dump(data,f)
+        f.close()
