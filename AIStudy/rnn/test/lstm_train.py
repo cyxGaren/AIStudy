@@ -86,12 +86,11 @@ def train(name):
 
 
 
-def use_model():
+def use_model(name):
         pred_y = lstm(1)
         saver = tf.train.Saver()
         with tf.Session() as sess:
-                saver.restore(sess,'../ckpt/rnn.ckpt')
-
+                saver.restore(sess,'./ckpt/rnn_'+name+'.ckpt')
                 test_x_list_1 = train_x[-1:]
                 test_x_list_2 = test_x
                 pred_y_list_1 = []
@@ -113,17 +112,26 @@ def use_model():
                 plt.plot(range(index,_length),_test_y,color='blue')
                 plt.subplot(236)
                 plt.plot(range(index,_length),pred_y_list_2,color='green')
-                plt.savefig('../pic/pred5.png')
+                plt.savefig('./pic/pred5.png')
+  
 
 
+if(sys.argv[3]=='train'):
+        time_start = time.time()
+        filename,name = sys.argv[1],sys.argv[2]
+        print('start training '+name+'.................')
+        x,y,scaler = load_data(filename,name)
+        index = (int)(3.0/7*len(x))
+        _length = len(y)
+        train_x,train_y,test_x,test_y = x[:index],y[:index],x[index:],y[index:]
+        train(name)
+        print('end training '+name+'.................')
+        print('training '+name+' time: '+str(time.time()-time_start))
 
-time_start = time.time()
-filename,name = sys.argv[1],sys.argv[2]
-print('start training '+name+'.................')
-x,y,scaler = load_data(filename,name)
-index = (int)(3.0/7*len(x))
-_length = len(y)
-train_x,train_y,test_x,test_y = x[:index],y[:index],x[index:],y[index:]
-train(name)
-print('end training '+name+'.................')
-print('training '+name+' time: '+str(time.time()-time_start))
+if(sys.argv[3]=='pred'):
+        filename,name = sys.argv[1],sys.argv[2]
+        x,y,scaler = load_data(filename,name)
+        index = (int)(3.0/7*len(x))
+        _length = len(y)
+        train_x,train_y,test_x,test_y = x[:index],y[:index],x[index:],y[index:] 
+        use_model(name)
