@@ -11,7 +11,7 @@ from sklearn.ensemble import BaggingRegressor
 from sklearn.tree import ExtraTreeRegressor
 from sklearn.externals import joblib
 import time
-
+import sys
 
 class RandomForest:	
 	def StartForestTrain(self,modelname,*filenames):
@@ -64,6 +64,12 @@ class RandomForest:
 		print(result)
 		
 
-t=RandomForest()
-t.StartForestTrain('rf.pkl','ex.csv')
-t.UseForestTrain('rf.pkl','ex0.csv')
+rf=RandomForest()
+modelname = sys.argv[2]
+filename = sys.argv[3]
+if sys.argv[1]=='train':
+	rf.StartForestTrain(modelname,filename)
+elif sys.argv[1]=='pred':
+	rf.UseForestTrain(modelname,filename)
+else:
+	print('wrong args')
