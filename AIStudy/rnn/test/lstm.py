@@ -3,6 +3,7 @@ import time
 import pickle
 import pandas as pd
 import numpy as np
+import sys
 
 step=10
 
@@ -10,14 +11,14 @@ class LSTM:
 	def StartLSTMTrain(self,filename):
 		time_start = time.time()
 		print('start training.............')
-		os.system('python lstm_train.py '+filename+' rate train')
-		os.system('python lstm_train.py '+filename+' threshold train')
+		os.system('python lstm_train_pred.py '+filename+' rate train')
+		os.system('python lstm_train_pred.py '+filename+' threshold train')
 		print('end training..............')
 		print('training time: '+str(time.time()-time_start))
 
 	def UseLSTMModel(self,filename):
-		os.system('python lstm_train.py '+filename+' rate pred')
-		os.system('python lstm_train.py '+filename+' threshold pred')
+		os.system('python lstm_train_pred.py '+filename+' rate pred')
+		os.system('python lstm_train_pred.py '+filename+' threshold pred')
 		f1=open('./ckpt/pred_rate.txt','rb')
 		f2=open('./ckpt/pred_threshold.txt','rb')                
 		rate=pickle.loads(f1.read())
@@ -38,4 +39,10 @@ class LSTM:
 		print(true_pred/len(alarm))
 
 lstm = LSTM()
-lstm.UseLSTMModel('test.csv')
+filename = sys.argv[2]
+if sys.argv[1]=='train':
+	lstm.StartLSTMTrain(filename)
+elif sys.argv[1]=='pred':
+	lstm.UseLSTMModel(filename)
+else:
+	print('wrong args')
