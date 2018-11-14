@@ -29,7 +29,7 @@ class LSTM:
 				alarm.append(1)
 			else:
 				alarm.append(0)
-		data = pd.read_csv('test.csv')['ALARM']
+		data = pd.read_csv(filename)['ALARM']
 		index = (int)(3.0/7*(data.shape[0]-step))+1
 		data=data[index:]
 		true_pred=0
