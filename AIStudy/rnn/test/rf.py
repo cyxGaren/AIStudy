@@ -12,6 +12,7 @@ from sklearn.tree import ExtraTreeRegressor
 from sklearn.externals import joblib
 import time
 import sys
+import csv
 
 class RandomForest:	
 	def StartForestTrain(self,modelname,*filenames):
@@ -61,7 +62,17 @@ class RandomForest:
 		data.dropna(inplace=True)
 		X = data[["R001_014","R001_016","R001_018","R001_020","R001_022","R001_013","R001_015","R001_017","R001_019","R001_021"]] 
 		result = model.predict(X)
-		print(result)
+		Y = data['RATE']
+		csvfile = open('rf_pred.csv','w')
+		writer = csv.writer(csvfile)
+		writer.writerow(["回归阈值"])
+		a = []
+		for i in range(90000):
+			a.append(result[i])
+		writer.writerow(a)
+		csvfile.close()
+			
+			
 		
 
 rf=RandomForest()
